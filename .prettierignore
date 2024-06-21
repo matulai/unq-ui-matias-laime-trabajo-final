@@ -1,0 +1,16 @@
+# Initially ignore everything in the project
+/*
+
+# Source code and content directories
+!/.github
+!/public
+!/src
+
+# Configuration files
+!.eslintrc.cjs
+!.prettierrc
+!.vite.config.js
+!.json
+
+# Documentation
+!README.md
