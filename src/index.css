@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: #f0f0f0;
+  color: #080808;
+}
+
+a {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  color: #080808;
+}
+
+img {
+  display: block;
+}
