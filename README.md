@@ -26,9 +26,3 @@ Now that the dependencies are installed, initiate the development server to brin
 ```
 $ npm run dev
 ```
-
-Now open your browser and go to:
-
-```
-https://localhost:5173/
-```
