@@ -1,23 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import Results from '../../components/Results';
 import api from '../../utils/api.js';
 
 const QuestionsPage = () => {
   const params = useParams();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answer, setAnswer] = useState('');
   const [answers, setAnswers] = useState([]);
   const [currentOptionId, setCurrentOptions] = useState(0);
-
-  //  Se puede usar assyncstorage para evitar que el orden de las preguntas
-  //  cambien al recargar la pagina, guardando algunos estados en el localstorage
-  //  se podria guardar los siguiente: questions, currentQuestionIndex, answers y
-  //  currentOptionId.
-  //  Tener en cuenta que deberia de limpiar el localstorage al finalizar el juego
-  //  o al iniciar un juego nuevo.
+  const [seeResults, setSeeResults] = useState(false);
 
   useEffect(() => {
     api.getQuestionsWithDifficulty(params.difficulty).then((data) => {
@@ -42,14 +36,11 @@ const QuestionsPage = () => {
   };
 
   const handleFinishQuestions = () => {
-    // redirigir a la pagina de resultados con las respuestas y las preguntas
     if (!answer) {
       return;
     }
-    const finalAnswers = [...answers, answer];
-    navigate(
-      `/results/${questions.map((item) => item.id).join(',')}/${finalAnswers.join(',')}`
-    );
+    setAnswers((prevAnswers) => [...prevAnswers, answer]);
+    setSeeResults(true);
   };
 
   if (isLoading) {
@@ -81,23 +72,35 @@ const QuestionsPage = () => {
   ];
 
   return (
-    <div>
-      <div>
-        <h2>{questions[currentQuestionIndex].question}</h2>
-      </div>
-      <div>
-        {options.map((item) => (
-          <button key={item.id} onClick={() => handleChooseAnswer(item.string)}>
-            {item.option}
-          </button>
-        ))}
-      </div>
-      {questions.length - 1 === currentQuestionIndex ? (
-        <button onClick={handleFinishQuestions}>finish</button>
+    <>
+      {seeResults ? (
+        <Results
+          questionsIds={questions.map((it) => it.id)}
+          answers={answers}
+        />
       ) : (
-        <button onClick={handleNextQuestion}>next question</button>
+        <div>
+          <div>
+            <h2>{questions[currentQuestionIndex].question}</h2>
+          </div>
+          <div>
+            {options.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleChooseAnswer(item.string)}
+              >
+                {item.option}
+              </button>
+            ))}
+          </div>
+          {questions.length - 1 === currentQuestionIndex ? (
+            <button onClick={handleFinishQuestions}>finish</button>
+          ) : (
+            <button onClick={handleNextQuestion}>next question</button>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
