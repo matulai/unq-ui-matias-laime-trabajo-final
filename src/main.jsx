@@ -1,9 +1,7 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import StartPage from './pages/StartPage';
 import QuestionsPage from './pages/QuestionsPage';
-import ResultsPage from './pages/ResultsPage';
+import StartPage from './pages/StartPage';
 import ReactDOM from 'react-dom/client';
-
 import './index.css';
 
 const router = createBrowserRouter([
@@ -14,10 +12,6 @@ const router = createBrowserRouter([
   {
     path: '/questions/:difficulty',
     element: <QuestionsPage />,
-  },
-  {
-    path: '/results/:questionsIds/:answers',
-    element: <ResultsPage />,
   },
 ]);
 

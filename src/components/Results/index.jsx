@@ -1,13 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
 import combineArraysToObjectIdOption from '../../utils/constants.js';
 import api from '../../utils/api.js';
 
-const ResultPage = () => {
-  const params = useParams();
-  const answers = params.answers.split(',');
-  const questionsIds = params.questionsIds.split(',');
+const Results = ({ answers, questionsIds }) => {
   const navigate = useNavigate();
   const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState(0);
   const [numberOfIncorrectAnswers, setNumberOfIncorrectAnswers] = useState(0);
@@ -60,4 +56,4 @@ const ResultPage = () => {
   );
 };
 
-export default ResultPage;
+export default Results;
