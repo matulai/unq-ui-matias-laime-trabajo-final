@@ -1,11 +1,11 @@
-.page-box {
+.startpage-box {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 5%;
 }
 
-.container {
+.startpage-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,18 +17,14 @@
   gap: 20px;
 }
 
-.header {
+.startpage-header {
   display: flex;
   flex-direction: column;
   text-align: center;
   gap: 12px;
 }
 
-p {
-  padding: 0px;
-}
-
-.button-start {
+.startpage-button-start {
   padding: 12px;
   background-color: #7f8c8d;
   box-shadow: 2.5px 4.5px 0px 2px #707b7c;
@@ -39,7 +35,7 @@ p {
   cursor: pointer;
 }
 
-.button {
+.startpage-button {
   padding: 12px;
   color: white;
   border: none;

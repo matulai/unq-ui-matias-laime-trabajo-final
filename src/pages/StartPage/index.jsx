@@ -39,20 +39,20 @@ const StartPage = () => {
   }
 
   return (
-    <div className="page-box">
-      <div className="container">
-        <div className="header">
+    <div className="startpage-box">
+      <div className="startpage-container">
+        <div className="startpage-header">
           <h1>Questions and Answers</h1>
           <p>Test your knowledge</p>
         </div>
         <img src={imgDificulty} alt="quiz" />
         <button
-          className={`button difficulty-${difficulty}`}
+          className={`startpage-button difficulty-${difficulty}`}
           onClick={handleDifficultyChange}
         >
           {difficulty.toUpperCase()}
         </button>
-        <button className="button-start" onClick={handleStartGame}>
+        <button className="startpage-button-start" onClick={handleStartGame}>
           START
         </button>
       </div>
