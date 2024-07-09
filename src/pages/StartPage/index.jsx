@@ -4,6 +4,7 @@ import extremeImg from '../../assets/difficulty-extreme-face.png';
 import mediumImg from '../../assets/difficulty-medium-face.png';
 import easyImg from '../../assets/difficulty-easy-face.png';
 import hardImg from '../../assets/difficulty-hard-face.png';
+import Spinner from '../../components/Spinner';
 import api from '../../utils/api.js';
 import './StartPage.css';
 
@@ -35,7 +36,7 @@ const StartPage = () => {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   return (

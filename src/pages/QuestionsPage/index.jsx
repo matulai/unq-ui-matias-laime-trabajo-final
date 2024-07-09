@@ -1,17 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Spinner from '../../components/Spinner';
 import Results from '../../components/Results';
 import api from '../../utils/api.js';
+import './QuestionsPage.css';
 
 const QuestionsPage = () => {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answer, setAnswer] = useState('');
   const [answers, setAnswers] = useState([]);
   const [currentOptionId, setCurrentOptions] = useState(0);
   const [seeResults, setSeeResults] = useState(false);
+
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [correctOptionId, setCorrectOptionId] = useState(100);
+  const [choosedOption, setChoosedOption] = useState('');
 
   useEffect(() => {
     api.getQuestionsWithDifficulty(params.difficulty).then((data) => {
@@ -20,31 +25,36 @@ const QuestionsPage = () => {
     });
   }, [params]);
 
-  const handleChooseAnswer = (optionString) => {
-    setAnswer(optionString);
+  const handleNextQuestion = (answer) => {
+    setAnswers((prevAnswers) => [...prevAnswers, answer]);
+    if (questions.length - 1 === currentQuestionIndex) {
+      setSeeResults(true);
+    } else {
+      setCurrentOptions((prevOptionId) => prevOptionId + 4);
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    }
   };
 
-  const handleNextQuestion = () => {
-    // crear modal para handlear errores
-    if (!answer) {
-      return;
-    }
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    setCurrentOptions((prevOptionId) => prevOptionId + 4);
-    setAnswers((prevAnswers) => [...prevAnswers, answer]);
-    setAnswer('');
-  };
-
-  const handleFinishQuestions = () => {
-    if (!answer) {
-      return;
-    }
-    setAnswers((prevAnswers) => [...prevAnswers, answer]);
-    setSeeResults(true);
+  const temp = async (item) => {
+    setIsAnswered(true);
+    await api
+      .verifyAnswerOfQuestion(questions[currentQuestionIndex].id, item.string)
+      .then((data) => {
+        if (data.answer) {
+          setCorrectOptionId(item.id);
+        }
+        setChoosedOption(item.string);
+      });
+    setTimeout(() => {
+      setChoosedOption('');
+      setCorrectOptionId(100);
+      handleNextQuestion(item.string);
+      setIsAnswered(false);
+    }, 1000);
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   //  agrego indentificadores unicoa a las opciones para mejor performance.
@@ -72,35 +82,34 @@ const QuestionsPage = () => {
   ];
 
   return (
-    <>
+    <div className="questionspage-page-box">
       {seeResults ? (
         <Results
           questionsIds={questions.map((it) => it.id)}
           answers={answers}
         />
       ) : (
-        <div>
-          <div>
+        <div className="questionspage-container">
+          <div className="questionspage-question">
             <h2>{questions[currentQuestionIndex].question}</h2>
           </div>
-          <div>
+          <div className="questionspage-question-options">
             {options.map((item) => (
               <button
+                className={`questionspage-option-button 
+                  ${item.id == correctOptionId ? 'correct' : ''}
+                  ${choosedOption == item.string && item.id != correctOptionId ? 'incorrect' : ''}`}
                 key={item.id}
-                onClick={() => handleChooseAnswer(item.string)}
+                onClick={() => temp(item)}
+                disabled={isAnswered}
               >
-                {item.option}
+                {item.option.toUpperCase()}
               </button>
             ))}
           </div>
-          {questions.length - 1 === currentQuestionIndex ? (
-            <button onClick={handleFinishQuestions}>finish</button>
-          ) : (
-            <button onClick={handleNextQuestion}>next question</button>
-          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

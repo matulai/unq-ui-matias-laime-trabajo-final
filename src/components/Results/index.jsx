@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import combineArraysToObjectIdOption from '../../utils/constants.js';
+import Spinner from '../Spinner';
 import api from '../../utils/api.js';
+import './Results.css';
 
+// eslint-disable-next-line react/prop-types
 const Results = ({ answers, questionsIds }) => {
   const navigate = useNavigate();
   const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState(0);
@@ -11,21 +14,13 @@ const Results = ({ answers, questionsIds }) => {
   const QAObject = combineArraysToObjectIdOption(questionsIds, answers);
 
   // TODO: Refactor this useEffect to use Promise.all
-  // TODO: NO PASAR LOS IDs DE LAS PREGUNTAS Y RESPUESTAS POR LA URL
   useEffect(() => {
-    // QAObject.forEach((QA) => {
-    //   api.verifyAnswerOfQuestion(QA.id, QA.option).then((data) => {
-    //     console.log(data);
-    //     setNumberOfCorrectAnswers((prev) => prev + data.answer);
-    //     setNumberOfIncorrectAnswers((prev) => prev + !data.answer);
-    //     setIsLoading(false);
-    //   });
-    // });
     const promises = QAObject.map((QA) =>
       api.verifyAnswerOfQuestion(QA.id, QA.option)
     );
 
     Promise.all(promises).then((data) => {
+      console.log(data);
       data.forEach((item) => {
         setNumberOfCorrectAnswers((prev) => prev + item.answer);
         setNumberOfIncorrectAnswers((prev) => prev + !item.answer);
@@ -39,18 +34,22 @@ const Results = ({ answers, questionsIds }) => {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   return (
     <>
-      <div>
-        <div>
+      <div className="results-container">
+        <div className="results-questions-stadistics">
           <h1>Results</h1>
-          <p>Correct answers: {numberOfCorrectAnswers}</p>
-          <p>Incorrect answers: {numberOfIncorrectAnswers}</p>
+          <p>
+            Correct answers: {numberOfCorrectAnswers} <br />
+            Incorrect answers: {numberOfIncorrectAnswers}
+          </p>
         </div>
-        <button onClick={handlePlayAgain}>Play again</button>
+        <button className="results-button" onClick={handlePlayAgain}>
+          PLAY AGAIN
+        </button>
       </div>
     </>
   );
