@@ -12,14 +12,13 @@ const QuestionsPage = () => {
   const [questions, setQuestions] = useState([]);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [currentOptionId, setCurrentOptions] = useState(0);
+  const [firstOptionId, setFirstOptionId] = useState(0);
 
   const [isAnswered, setIsAnswered] = useState(false);
   const [correctOptionId, setCorrectOptionId] = useState(null);
   const [choosedOption, setChoosedOption] = useState('');
 
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+  const [correctAnswersNumber, setCorrectAnswersNumber] = useState(0);
 
   useEffect(() => {
     api.getQuestionsWithDifficulty(params.difficulty).then((data) => {
@@ -32,11 +31,14 @@ const QuestionsPage = () => {
     if (questions.length - 1 === currentQuestionIndex) {
       setSeeResults(true);
     } else {
-      setCurrentOptions((prevOptionId) => prevOptionId + 4);
+      setFirstOptionId((prevOptionId) => prevOptionId + 4);
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     }
   };
 
+  // Nose si esta bien el async await aca, es para evitar inconsistencias
+  // Igual estaria bueno que al hacer la peticion de las preguntas a la api
+  // te devuelva tambien la respuesta correcta para evitar hacer otra peticion.
   const handleChooseOption = async (item) => {
     setIsAnswered(true);
     await api
@@ -44,9 +46,7 @@ const QuestionsPage = () => {
       .then((data) => {
         if (data.answer) {
           setCorrectOptionId(item.id);
-          setCorrectAnswers((prev) => prev + 1);
-        } else {
-          setIncorrectAnswers((prev) => prev + 1);
+          setCorrectAnswersNumber((prev) => prev + 1);
         }
         setChoosedOption(item.string);
       });
@@ -65,22 +65,22 @@ const QuestionsPage = () => {
   //  agrego indentificadores unicos a las opciones para evitar renderizados de mas.
   const options = [
     {
-      id: currentOptionId,
+      id: firstOptionId,
       option: questions[currentQuestionIndex].option1,
       string: 'option1',
     },
     {
-      id: currentOptionId + 1,
+      id: firstOptionId + 1,
       option: questions[currentQuestionIndex].option2,
       string: 'option2',
     },
     {
-      id: currentOptionId + 2,
+      id: firstOptionId + 2,
       option: questions[currentQuestionIndex].option3,
       string: 'option3',
     },
     {
-      id: currentOptionId + 3,
+      id: firstOptionId + 3,
       option: questions[currentQuestionIndex].option4,
       string: 'option4',
     },
@@ -90,8 +90,8 @@ const QuestionsPage = () => {
     <div className="questionspage-page-box">
       {seeResults ? (
         <Results
-          numberOfCorrectAnswers={correctAnswers}
-          numberOfIncorrectAnswers={incorrectAnswers}
+          numberOfCorrectAnswers={correctAnswersNumber}
+          numberOfIncorrectAnswers={questions.length - correctAnswersNumber}
         />
       ) : (
         <div className="questionspage-container">
