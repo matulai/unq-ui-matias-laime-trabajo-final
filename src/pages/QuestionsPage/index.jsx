@@ -8,15 +8,18 @@ import './QuestionsPage.css';
 const QuestionsPage = () => {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [questions, setQuestions] = useState([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  const [currentOptionId, setCurrentOptions] = useState(0);
   const [seeResults, setSeeResults] = useState(false);
+  const [questions, setQuestions] = useState([]);
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentOptionId, setCurrentOptions] = useState(0);
 
   const [isAnswered, setIsAnswered] = useState(false);
-  const [correctOptionId, setCorrectOptionId] = useState(100);
+  const [correctOptionId, setCorrectOptionId] = useState(null);
   const [choosedOption, setChoosedOption] = useState('');
+
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
 
   useEffect(() => {
     api.getQuestionsWithDifficulty(params.difficulty).then((data) => {
@@ -25,8 +28,7 @@ const QuestionsPage = () => {
     });
   }, [params]);
 
-  const handleNextQuestion = (answer) => {
-    setAnswers((prevAnswers) => [...prevAnswers, answer]);
+  const handleNextQuestion = () => {
     if (questions.length - 1 === currentQuestionIndex) {
       setSeeResults(true);
     } else {
@@ -35,29 +37,32 @@ const QuestionsPage = () => {
     }
   };
 
-  const temp = async (item) => {
+  const handleChooseOption = async (item) => {
     setIsAnswered(true);
     await api
       .verifyAnswerOfQuestion(questions[currentQuestionIndex].id, item.string)
       .then((data) => {
         if (data.answer) {
           setCorrectOptionId(item.id);
+          setCorrectAnswers((prev) => prev + 1);
+        } else {
+          setIncorrectAnswers((prev) => prev + 1);
         }
         setChoosedOption(item.string);
       });
     setTimeout(() => {
       setChoosedOption('');
-      setCorrectOptionId(100);
+      setCorrectOptionId(null);
       handleNextQuestion(item.string);
       setIsAnswered(false);
-    }, 1000);
+    }, 250);
   };
 
   if (isLoading) {
     return <Spinner />;
   }
 
-  //  agrego indentificadores unicoa a las opciones para mejor performance.
+  //  agrego indentificadores unicos a las opciones para evitar renderizados de mas.
   const options = [
     {
       id: currentOptionId,
@@ -85,8 +90,8 @@ const QuestionsPage = () => {
     <div className="questionspage-page-box">
       {seeResults ? (
         <Results
-          questionsIds={questions.map((it) => it.id)}
-          answers={answers}
+          numberOfCorrectAnswers={correctAnswers}
+          numberOfIncorrectAnswers={incorrectAnswers}
         />
       ) : (
         <div className="questionspage-container">
@@ -100,7 +105,7 @@ const QuestionsPage = () => {
                   ${item.id == correctOptionId ? 'correct' : ''}
                   ${choosedOption == item.string && item.id != correctOptionId ? 'incorrect' : ''}`}
                 key={item.id}
-                onClick={() => temp(item)}
+                onClick={() => handleChooseOption(item)}
                 disabled={isAnswered}
               >
                 {item.option.toUpperCase()}
