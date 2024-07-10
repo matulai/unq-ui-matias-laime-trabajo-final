@@ -1,0 +1,47 @@
+.button {
+  padding: 12px;
+  color: white;
+  border: none;
+  width: 12em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.w20 {
+  width: 20em;
+}
+
+.difficulty-easy {
+  background-color: #2ecc71;
+  box-shadow: 2.5px 4.5px 0px 2px #28b463;
+}
+
+.difficulty-normal {
+  background-color: #f1c40f;
+  box-shadow: 2.5px 4.5px 0px 2px #d4ac0d;
+}
+
+.difficulty-hard {
+  background-color: #e74c3c;
+  box-shadow: 2.5px 4.5px 0px 2px #cb4335;
+}
+
+.difficulty-extreme {
+  background-color: #8e44ad;
+  box-shadow: 2.5px 4.5px 0px 2px #7d3c98;
+}
+
+.button-style-gray {
+  background-color: #7f8c8d;
+  box-shadow: 2.5px 4.5px 0px 2px #707b7c;
+}
+
+.button-style-correct {
+  background-color: #2ecc71;
+  box-shadow: 2.5px 4.5px 0px 2px #27ae60;
+}
+
+.button-style-incorrect {
+  background-color: #e74c3c;
+  box-shadow: 2.5px 4.5px 0px 2px #c0392b;
+}
