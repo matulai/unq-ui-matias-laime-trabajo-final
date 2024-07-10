@@ -36,7 +36,7 @@ const QuestionsPage = () => {
     }
   };
 
-  // Nose si esta bien el async await aca, es para evitar inconsistencias
+  // Nose si esta bien el async await aca,osea la api me obliga :V. feedback?
   // Igual estaria bueno que al hacer la peticion de las preguntas a la api
   // te devuelva tambien la respuesta correcta para evitar hacer otra peticion.
   const handleChooseOption = async (item) => {
